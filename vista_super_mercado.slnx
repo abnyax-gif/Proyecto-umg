@@ -1,0 +1,7 @@
+<Solution>
+  <Configurations>
+    <Platform Name="x64" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Project Path="super_mercado/super_mercado.vcxproj" Id="cfb141bf-09b6-4679-bb75-91b6fb2f8496" />
+</Solution>
