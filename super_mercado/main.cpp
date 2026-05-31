@@ -164,25 +164,26 @@ int main() {
                     int existencia;
                     int id_marca;
 
-                    cout << "Codigo: ";
+                    // Ejemplos visuales agregados para evitar errores de formato
+                    cout << "Codigo (Ej. P001, P002): ";
                     getline(cin, codigo);
 
-                    cout << "Producto: ";
+                    cout << "Producto (Ej. Coca Cola 3L): ";
                     getline(cin, producto);
 
-                    cout << "Descripcion: ";
+                    cout << "Descripcion (Ej. Bebida gaseosa): ";
                     getline(cin, descripcion);
 
-                    cout << "Precio Costo: ";
+                    cout << "Precio Costo (Ej. 15.50): ";
                     cin >> pc;
 
-                    cout << "Precio Venta: ";
+                    cout << "Precio Venta (Ej. 18.00): ";
                     cin >> pv;
 
-                    cout << "Existencia: ";
+                    cout << "Existencia (Ej. 90): ";
                     cin >> existencia;
 
-                    cout << "ID Marca: ";
+                    cout << "ID Marca (Debe existir en Marcas. Ej. 1): ";
                     cin >> id_marca;
 
                     p.setCodigo(codigo);
@@ -216,12 +217,13 @@ int main() {
                     int existencia;
                     int id_marca;
 
-                    cout << "ID Producto: ";
+                    cout << "ID Producto a modificar: ";
                     cin >> id;
 
                     cin.ignore();
 
-                    cout << "Nuevo Codigo: ";
+                    // Ejemplos visuales agregados también en la modificación
+                    cout << "Nuevo Codigo (Ej. P002): ";
                     getline(cin, codigo);
 
                     cout << "Nuevo Producto: ";
@@ -239,7 +241,7 @@ int main() {
                     cout << "Nueva Existencia: ";
                     cin >> existencia;
 
-                    cout << "Nuevo ID Marca: ";
+                    cout << "Nuevo ID Marca (Debe existir): ";
                     cin >> id_marca;
 
                     p.setCodigo(codigo);
@@ -318,7 +320,7 @@ int main() {
                     string proveedor;
                     string nit;
                     string direccion;
-                    string telefono;
+                    string telephone; // cambiado internamente para no chocar si fuera necesario
 
                     cout << "Proveedor: ";
                     getline(cin, proveedor);
@@ -330,12 +332,12 @@ int main() {
                     getline(cin, direccion);
 
                     cout << "Telefono: ";
-                    getline(cin, telefono);
+                    getline(cin, telephone);
 
                     p.setProveedor(proveedor);
                     p.setNit(nit);
                     p.setDireccion(direccion);
-                    p.setTelefono(telefono);
+                    p.setTelefono(telephone);
 
                     p.insertar();
 
@@ -353,7 +355,7 @@ int main() {
                     string proveedor;
                     string nit;
                     string direccion;
-                    string telefono;
+                    string telephone;
 
                     cout << "ID Proveedor: ";
                     cin >> id;
@@ -370,12 +372,12 @@ int main() {
                     getline(cin, direccion);
 
                     cout << "Telefono: ";
-                    getline(cin, telefono);
+                    getline(cin, telephone);
 
                     p.setProveedor(proveedor);
                     p.setNit(nit);
                     p.setDireccion(direccion);
-                    p.setTelefono(telefono);
+                    p.setTelefono(telephone);
 
                     p.modificar(id);
 
@@ -735,23 +737,18 @@ int main() {
                     e.setIdPuesto(idPuesto);
                     e.setFechaInicioLaborales(fechaInicio);
 
-                    if (
-                        e.validarNombres() &&
-                        e.validarApellidos() &&
-                        e.validarDireccion() &&
-                        e.validarTelefonoEmpleado() &&
-                        e.validarCUIEmpleado() &&
-                        e.validarGeneroEmpleado() &&
-                        e.validarFechaNacimiento() &&
-                        e.validarFechaInicioLaborales()
-                        )
-                    {
-                        e.insertar();
-                    }
-                    else
-                    {
-                        cout << "\nDatos invalidos...\n";
-                    }
+                    cout << "\nValidando...\n";
+
+                    cout << "Nombres: " << e.validarNombres() << endl;
+                    cout << "Apellidos: " << e.validarApellidos() << endl;
+                    cout << "Direccion: " << e.validarDireccion() << endl;
+                    cout << "Telefono: " << e.validarTelefonoEmpleado() << endl;
+                    cout << "CUI: " << e.validarCUIEmpleado() << endl;
+                    cout << "Genero: " << e.validarGeneroEmpleado() << endl;
+                    cout << "Fecha Nacimiento: " << e.validarFechaNacimiento() << endl;
+                    cout << "Fecha Inicio: " << e.validarFechaInicioLaborales() << endl;
+
+                    e.insertar();
 
                     break;
                 }

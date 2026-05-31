@@ -131,9 +131,10 @@ public:
                 insertarCliente.c_str()
             );
 
-            id_cliente =
+            id_cliente = static_cast<int>(
                 mysql_insert_id(
                     cn.getConector()
+                )
                 );
 
             cout << "\nCliente registrado correctamente.\n";
