@@ -1,7 +1,3 @@
-// ==========================================
-// Cliente.h
-// ==========================================
-
 #pragma once
 
 #include <iostream>
@@ -19,9 +15,8 @@ private:
 
     int id_cliente = 0;
 
-    string codigo;
     string nit;
-    string correo;
+    string correo_electronico;
     string genero;
 
 public:
@@ -30,43 +25,27 @@ public:
     // SETTERS
     // ==========================================
 
-    void setCodigo(string c) {
-
-        codigo = c;
-    }
-
     void setNombres(string n) {
-
         nombres = n;
     }
 
     void setApellidos(string a) {
-
         apellidos = a;
     }
 
-    void setDireccion(string d) {
-
-        direccion = d;
-    }
-
     void setTelefono(string t) {
-
         telefono = t;
     }
 
     void setNit(string n) {
-
         nit = n;
     }
 
     void setCorreo(string c) {
-
-        correo = c;
+        correo_electronico = c;
     }
 
     void setGenero(string g) {
-
         genero = g;
     }
 
@@ -74,62 +53,41 @@ public:
     // VALIDACIONES
     // ==========================================
 
-    bool validarCodigo() {
-
-        regex formato(
-            "^C[0-9]{3}$"
-        );
-
-        return regex_match(
-            codigo,
-            formato
-        );
-    }
-
     bool validarNombres() {
-
-        return validarTexto(
-            nombres
-        );
+        return validarTexto(nombres);
     }
 
     bool validarApellidos() {
-
-        return validarTexto(
-            apellidos
-        );
-    }
-
-    bool validarDireccion() {
-
-        return direccion != "";
+        return validarTexto(apellidos);
     }
 
     bool validarTelefonoCliente() {
-
-        return validarTelefono(
-            telefono
-        );
+        return validarTelefono(telefono);
     }
 
     bool validarNitCliente() {
 
-        return validarNIT(
-            nit
+        regex formato(
+            "^(C/F|c/f|CF|cf|[0-9-]+)$"
+        );
+
+        return regex_match(
+            nit,
+            formato
         );
     }
 
     bool validarCorreoCliente() {
-
-        return validarCorreo(
-            correo
-        );
+        return validarCorreo(correo_electronico);
     }
 
     bool validarGeneroCliente() {
 
-        return validarGenero(
-            genero
+        regex formato("^[01]$");
+
+        return regex_match(
+            genero,
+            formato
         );
     }
 
@@ -146,37 +104,38 @@ public:
         if (cn.getConector() != NULL) {
 
             string consulta =
-                "INSERT INTO clientes(codigo,nombres,apellidos,direccion,telefono,nit,correo,genero) VALUES('" +
-                codigo + "','" +
+                "INSERT INTO clientes("
+                "nombres,"
+                "apellidos,"
+                "nit,"
+                "genero,"
+                "telefono,"
+                "correo_electronico,"
+                "fecha_ingreso"
+                ") VALUES('" +
                 nombres + "','" +
                 apellidos + "','" +
-                direccion + "','" +
+                nit + "',b'" +
+                genero + "','" +
                 telefono + "','" +
-                nit + "','" +
-                correo + "','" +
-                genero + "')";
-
-            const char* c =
-                consulta.c_str();
+                correo_electronico +
+                "',NOW())";
 
             int q_estado =
                 mysql_query(
                     cn.getConector(),
-                    c
+                    consulta.c_str()
                 );
 
             if (!q_estado) {
 
-                cout << "Cliente ingresado..." << endl;
+                cout << "Cliente ingresado correctamente..." << endl;
             }
             else {
 
                 cout << "Error al ingresar cliente..." << endl;
+                cout << mysql_error(cn.getConector()) << endl;
             }
-        }
-        else {
-
-            cout << "Error en conexion..." << endl;
         }
 
         cn.cerrar_conexion();
@@ -200,48 +159,39 @@ public:
             string consulta =
                 "SELECT * FROM clientes";
 
-            const char* c =
-                consulta.c_str();
+            mysql_query(
+                cn.getConector(),
+                consulta.c_str()
+            );
 
-            int q_estado =
-                mysql_query(
-                    cn.getConector(),
-                    c
+            resultado =
+                mysql_store_result(
+                    cn.getConector()
                 );
 
-            if (!q_estado) {
+            cout << endl;
+            cout << "============================================================" << endl;
+            cout << "ID | NOMBRES | APELLIDOS | NIT | TELEFONO" << endl;
+            cout << "============================================================" << endl;
 
-                resultado =
-                    mysql_store_result(
-                        cn.getConector()
-                    );
+            while (
+                (fila = mysql_fetch_row(resultado))
+                ) {
 
-                cout << endl;
-                cout << "========================================================" << endl;
-                cout << "ID | CODIGO | NOMBRES | APELLIDOS | TELEFONO" << endl;
-                cout << "========================================================" << endl;
-
-                while (
-                    (fila = mysql_fetch_row(resultado))
-                    ) {
-
-                    cout
-                        << fila[0]
-                        << " | "
-                        << fila[1]
-                        << " | "
-                        << fila[2]
-                        << " | "
-                        << fila[3]
-                        << " | "
-                        << fila[5]
-                        << endl;
-                }
+                cout
+                    << fila[0]
+                    << " | "
+                    << fila[1]
+                    << " | "
+                    << fila[2]
+                    << " | "
+                    << fila[3]
+                    << " | "
+                    << fila[5]
+                    << endl;
             }
-            else {
 
-                cout << "Error en consulta..." << endl;
-            }
+            mysql_free_result(resultado);
         }
 
         cn.cerrar_conexion();
@@ -261,33 +211,29 @@ public:
 
             string consulta =
                 "UPDATE clientes SET "
-                "codigo='" + codigo +
-                "',nombres='" + nombres +
+                "nombres='" + nombres +
                 "',apellidos='" + apellidos +
-                "',direccion='" + direccion +
-                "',telefono='" + telefono +
                 "',nit='" + nit +
-                "',correo='" + correo +
-                "',genero='" + genero +
+                "',genero=b'" + genero +
+                "',telefono='" + telefono +
+                "',correo_electronico='" + correo_electronico +
                 "' WHERE id_cliente=" +
                 to_string(id);
-
-            const char* c =
-                consulta.c_str();
 
             int q_estado =
                 mysql_query(
                     cn.getConector(),
-                    c
+                    consulta.c_str()
                 );
 
             if (!q_estado) {
 
-                cout << "Cliente modificado..." << endl;
+                cout << "Cliente modificado correctamente..." << endl;
             }
             else {
 
-                cout << "Error al modificar..." << endl;
+                cout << "Error al modificar cliente..." << endl;
+                cout << mysql_error(cn.getConector()) << endl;
             }
         }
 
@@ -310,22 +256,20 @@ public:
                 "DELETE FROM clientes WHERE id_cliente=" +
                 to_string(id);
 
-            const char* c =
-                consulta.c_str();
-
             int q_estado =
                 mysql_query(
                     cn.getConector(),
-                    c
+                    consulta.c_str()
                 );
 
             if (!q_estado) {
 
-                cout << "Cliente eliminado..." << endl;
+                cout << "Cliente eliminado correctamente..." << endl;
             }
             else {
 
-                cout << "Error al eliminar..." << endl;
+                cout << "Error al eliminar cliente..." << endl;
+                cout << mysql_error(cn.getConector()) << endl;
             }
         }
 
@@ -368,23 +312,24 @@ public:
 
             cout << endl;
             cout << "==============================" << endl;
-            cout << "Cliente Encontrado" << endl;
+            cout << "CLIENTE ENCONTRADO" << endl;
             cout << "==============================" << endl;
 
             cout << "ID: " << fila[0] << endl;
-            cout << "Codigo: " << fila[1] << endl;
-            cout << "Nombres: " << fila[2] << endl;
-            cout << "Apellidos: " << fila[3] << endl;
-            cout << "Direccion: " << fila[4] << endl;
+            cout << "Nombres: " << fila[1] << endl;
+            cout << "Apellidos: " << fila[2] << endl;
+            cout << "NIT: " << fila[3] << endl;
+            cout << "Genero: " << (fila[4][0] == '1' ? "Masculino" : "Femenino") << endl;
             cout << "Telefono: " << fila[5] << endl;
-            cout << "NIT: " << fila[6] << endl;
-            cout << "Correo: " << fila[7] << endl;
-            cout << "Genero: " << fila[8] << endl;
+            cout << "Correo: " << fila[6] << endl;
+            cout << "Fecha Ingreso: " << fila[7] << endl;
         }
         else {
 
             cout << "Cliente no encontrado..." << endl;
         }
+
+        mysql_free_result(resultado);
 
         cn.cerrar_conexion();
     }

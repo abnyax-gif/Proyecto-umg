@@ -1,7 +1,3 @@
-// ==========================================
-// Empleado.h
-// ==========================================
-
 #pragma once
 
 #include <iostream>
@@ -19,10 +15,10 @@ private:
 
     int id_empleado = 0;
 
-    string codigo;
-    string dpi;
+    string cui;
     string genero;
     string fecha_nacimiento;
+    string fecha_inicio_laborales;
 
     int id_puesto = 0;
 
@@ -32,48 +28,39 @@ public:
     // SETTERS
     // ==========================================
 
-    void setCodigo(string c) {
-
-        codigo = c;
-    }
-
     void setNombres(string n) {
-
         nombres = n;
     }
 
     void setApellidos(string a) {
-
         apellidos = a;
     }
 
     void setDireccion(string d) {
-
         direccion = d;
     }
 
     void setTelefono(string t) {
-
         telefono = t;
     }
 
-    void setDPI(string d) {
-
-        dpi = d;
+    void setCUI(string c) {
+        cui = c;
     }
 
     void setGenero(string g) {
-
         genero = g;
     }
 
     void setFechaNacimiento(string f) {
-
         fecha_nacimiento = f;
     }
 
-    void setIdPuesto(int idp) {
+    void setFechaInicioLaborales(string f) {
+        fecha_inicio_laborales = f;
+    }
 
+    void setIdPuesto(int idp) {
         id_puesto = idp;
     }
 
@@ -81,63 +68,42 @@ public:
     // VALIDACIONES
     // ==========================================
 
-    bool validarCodigo() {
-
-        regex formato(
-            "^E[0-9]{3}$"
-        );
-
-        return regex_match(
-            codigo,
-            formato
-        );
-    }
-
     bool validarNombres() {
-
-        return validarTexto(
-            nombres
-        );
+        return validarTexto(nombres);
     }
 
     bool validarApellidos() {
-
-        return validarTexto(
-            apellidos
-        );
+        return validarTexto(apellidos);
     }
 
     bool validarDireccion() {
-
-        return direccion != "";
+        return !direccion.empty();
     }
 
     bool validarTelefonoEmpleado() {
-
-        return validarTelefono(
-            telefono
-        );
+        return validarTelefono(telefono);
     }
 
-    bool validarDPIEmpleado() {
-
-        return validarDPI(
-            dpi
-        );
+    bool validarCUIEmpleado() {
+        return validarDPI(cui);
     }
 
     bool validarGeneroEmpleado() {
 
-        return validarGenero(
-            genero
+        regex formato("^[01]$");
+
+        return regex_match(
+            genero,
+            formato
         );
     }
 
     bool validarFechaNacimiento() {
+        return validarFecha(fecha_nacimiento);
+    }
 
-        return validarFecha(
-            fecha_nacimiento
-        );
+    bool validarFechaInicioLaborales() {
+        return validarFecha(fecha_inicio_laborales);
     }
 
     // ==========================================
@@ -153,38 +119,44 @@ public:
         if (cn.getConector() != NULL) {
 
             string consulta =
-                "INSERT INTO empleados(codigo,nombres,apellidos,direccion,telefono,dpi,genero,fecha_nacimiento,id_puesto) VALUES('" +
-                codigo + "','" +
+                "INSERT INTO empleados("
+                "nombre,"
+                "apellidos,"
+                "direccion,"
+                "telefono,"
+                "cui,"
+                "genero,"
+                "fecha_nacimiento,"
+                "id_puesto,"
+                "fecha_inicio_laborales,"
+                "fecha_ingreso"
+                ") VALUES('" +
                 nombres + "','" +
                 apellidos + "','" +
                 direccion + "','" +
                 telefono + "','" +
-                dpi + "','" +
+                cui + "',b'" +
                 genero + "','" +
                 fecha_nacimiento + "'," +
-                to_string(id_puesto) + ")";
-
-            const char* c =
-                consulta.c_str();
+                to_string(id_puesto) + ",'" +
+                fecha_inicio_laborales +
+                "',NOW())";
 
             int q_estado =
                 mysql_query(
                     cn.getConector(),
-                    c
+                    consulta.c_str()
                 );
 
             if (!q_estado) {
 
-                cout << "Empleado ingresado..." << endl;
+                cout << "Empleado ingresado correctamente..." << endl;
             }
             else {
 
                 cout << "Error al ingresar empleado..." << endl;
+                cout << mysql_error(cn.getConector()) << endl;
             }
-        }
-        else {
-
-            cout << "Error en conexion..." << endl;
         }
 
         cn.cerrar_conexion();
@@ -208,48 +180,37 @@ public:
             string consulta =
                 "SELECT * FROM empleados";
 
-            const char* c =
-                consulta.c_str();
+            mysql_query(
+                cn.getConector(),
+                consulta.c_str()
+            );
 
-            int q_estado =
-                mysql_query(
-                    cn.getConector(),
-                    c
+            resultado =
+                mysql_store_result(
+                    cn.getConector()
                 );
 
-            if (!q_estado) {
+            cout << endl;
+            cout << "==========================================================" << endl;
+            cout << "ID | NOMBRE | APELLIDOS | CUI" << endl;
+            cout << "==========================================================" << endl;
 
-                resultado =
-                    mysql_store_result(
-                        cn.getConector()
-                    );
+            while (
+                (fila = mysql_fetch_row(resultado))
+                ) {
 
-                cout << endl;
-                cout << "======================================================" << endl;
-                cout << "ID | CODIGO | NOMBRES | APELLIDOS | DPI" << endl;
-                cout << "======================================================" << endl;
-
-                while (
-                    (fila = mysql_fetch_row(resultado))
-                    ) {
-
-                    cout
-                        << fila[0]
-                        << " | "
-                        << fila[1]
-                        << " | "
-                        << fila[2]
-                        << " | "
-                        << fila[3]
-                        << " | "
-                        << fila[6]
-                        << endl;
-                }
+                cout
+                    << fila[0]
+                    << " | "
+                    << fila[1]
+                    << " | "
+                    << fila[2]
+                    << " | "
+                    << fila[5]
+                    << endl;
             }
-            else {
 
-                cout << "Error en consulta..." << endl;
-            }
+            mysql_free_result(resultado);
         }
 
         cn.cerrar_conexion();
@@ -269,34 +230,32 @@ public:
 
             string consulta =
                 "UPDATE empleados SET "
-                "codigo='" + codigo +
-                "',nombres='" + nombres +
+                "nombre='" + nombres +
                 "',apellidos='" + apellidos +
                 "',direccion='" + direccion +
                 "',telefono='" + telefono +
-                "',dpi='" + dpi +
-                "',genero='" + genero +
+                "',cui='" + cui +
+                "',genero=b'" + genero +
                 "',fecha_nacimiento='" + fecha_nacimiento +
                 "',id_puesto=" + to_string(id_puesto) +
-                " WHERE id_empleado=" +
+                ",fecha_inicio_laborales='" + fecha_inicio_laborales +
+                "' WHERE id_empleado=" +
                 to_string(id);
-
-            const char* c =
-                consulta.c_str();
 
             int q_estado =
                 mysql_query(
                     cn.getConector(),
-                    c
+                    consulta.c_str()
                 );
 
             if (!q_estado) {
 
-                cout << "Empleado modificado..." << endl;
+                cout << "Empleado modificado correctamente..." << endl;
             }
             else {
 
-                cout << "Error al modificar..." << endl;
+                cout << "Error al modificar empleado..." << endl;
+                cout << mysql_error(cn.getConector()) << endl;
             }
         }
 
@@ -319,22 +278,20 @@ public:
                 "DELETE FROM empleados WHERE id_empleado=" +
                 to_string(id);
 
-            const char* c =
-                consulta.c_str();
-
             int q_estado =
                 mysql_query(
                     cn.getConector(),
-                    c
+                    consulta.c_str()
                 );
 
             if (!q_estado) {
 
-                cout << "Empleado eliminado..." << endl;
+                cout << "Empleado eliminado correctamente..." << endl;
             }
             else {
 
-                cout << "Error al eliminar..." << endl;
+                cout << "Error al eliminar empleado..." << endl;
+                cout << mysql_error(cn.getConector()) << endl;
             }
         }
 
@@ -342,7 +299,7 @@ public:
     }
 
     // ==========================================
-    // BUSCAR EMPLEADO
+    // BUSCAR
     // ==========================================
 
     void buscarEmpleado(int id) {
@@ -376,25 +333,28 @@ public:
         if (fila != NULL) {
 
             cout << endl;
-            cout << "===============================" << endl;
-            cout << "Empleado Encontrado" << endl;
-            cout << "===============================" << endl;
+            cout << "==============================" << endl;
+            cout << "EMPLEADO ENCONTRADO" << endl;
+            cout << "==============================" << endl;
 
             cout << "ID: " << fila[0] << endl;
-            cout << "Codigo: " << fila[1] << endl;
-            cout << "Nombres: " << fila[2] << endl;
-            cout << "Apellidos: " << fila[3] << endl;
-            cout << "Direccion: " << fila[4] << endl;
-            cout << "Telefono: " << fila[5] << endl;
-            cout << "DPI: " << fila[6] << endl;
-            cout << "Genero: " << fila[7] << endl;
-            cout << "Fecha Nacimiento: " << fila[8] << endl;
-            cout << "ID Puesto: " << fila[9] << endl;
+            cout << "Nombre: " << fila[1] << endl;
+            cout << "Apellidos: " << fila[2] << endl;
+            cout << "Direccion: " << fila[3] << endl;
+            cout << "Telefono: " << fila[4] << endl;
+            cout << "CUI: " << fila[5] << endl;
+            cout << "Genero: " << (fila[6][0] == '1' ? "Masculino" : "Femenino") << endl;
+            cout << "Fecha Nacimiento: " << fila[7] << endl;
+            cout << "ID Puesto: " << fila[8] << endl;
+            cout << "Fecha Inicio Laborales: " << fila[9] << endl;
+            cout << "Fecha Ingreso: " << fila[10] << endl;
         }
         else {
 
             cout << "Empleado no encontrado..." << endl;
         }
+
+        mysql_free_result(resultado);
 
         cn.cerrar_conexion();
     }

@@ -1,7 +1,3 @@
-// ==========================================
-// main.cpp
-// ==========================================
-
 #define _HAS_STD_BYTE 0
 
 #include <iostream>
@@ -44,10 +40,6 @@ int main() {
 
         switch (op) {
 
-            // ==========================================
-            // MARCAS
-            // ==========================================
-
         case 1: {
 
             Marca m;
@@ -82,23 +74,18 @@ int main() {
                     m.setMarca(marca);
 
                     if (m.validarMarca()) {
-
                         m.insertar();
                     }
                     else {
-
                         cout << "Marca invalida..." << endl;
                     }
 
                     break;
                 }
 
-                case 2: {
-
+                case 2:
                     m.mostrar();
-
                     break;
-                }
 
                 case 3: {
 
@@ -114,7 +101,6 @@ int main() {
                     getline(cin, marca);
 
                     m.setMarca(marca);
-
                     m.modificar(id);
 
                     break;
@@ -131,6 +117,7 @@ int main() {
 
                     break;
                 }
+
                 }
 
                 system("pause");
@@ -139,10 +126,6 @@ int main() {
 
             break;
         }
-
-              // ==========================================
-              // PRODUCTOS
-              // ==========================================
 
         case 2: {
 
@@ -215,12 +198,9 @@ int main() {
                     break;
                 }
 
-                case 2: {
-
+                case 2:
                     p.mostrar();
-
                     break;
-                }
 
                 case 3: {
 
@@ -241,25 +221,25 @@ int main() {
 
                     cin.ignore();
 
-                    cout << "Codigo: ";
+                    cout << "Nuevo Codigo: ";
                     getline(cin, codigo);
 
-                    cout << "Producto: ";
+                    cout << "Nuevo Producto: ";
                     getline(cin, producto);
 
-                    cout << "Descripcion: ";
+                    cout << "Nueva Descripcion: ";
                     getline(cin, descripcion);
 
-                    cout << "Precio Costo: ";
+                    cout << "Nuevo Precio Costo: ";
                     cin >> pc;
 
-                    cout << "Precio Venta: ";
+                    cout << "Nuevo Precio Venta: ";
                     cin >> pv;
 
-                    cout << "Existencia: ";
+                    cout << "Nueva Existencia: ";
                     cin >> existencia;
 
-                    cout << "ID Marca: ";
+                    cout << "Nuevo ID Marca: ";
                     cin >> id_marca;
 
                     p.setCodigo(codigo);
@@ -298,6 +278,7 @@ int main() {
 
                     break;
                 }
+
                 }
 
                 system("pause");
@@ -307,13 +288,9 @@ int main() {
             break;
         }
 
-              // ==========================================
-              // PROVEEDORES
-              // ==========================================
-
         case 3: {
 
-            Proveedor pr;
+            Proveedor p;
 
             int op2;
 
@@ -332,16 +309,111 @@ int main() {
                 cout << "\nSeleccione: ";
                 cin >> op2;
 
+                cin.ignore();
+
+                switch (op2) {
+
+                case 1: {
+
+                    string proveedor;
+                    string nit;
+                    string direccion;
+                    string telefono;
+
+                    cout << "Proveedor: ";
+                    getline(cin, proveedor);
+
+                    cout << "NIT: ";
+                    getline(cin, nit);
+
+                    cout << "Direccion: ";
+                    getline(cin, direccion);
+
+                    cout << "Telefono: ";
+                    getline(cin, telefono);
+
+                    p.setProveedor(proveedor);
+                    p.setNit(nit);
+                    p.setDireccion(direccion);
+                    p.setTelefono(telefono);
+
+                    p.insertar();
+
+                    break;
+                }
+
+                case 2:
+                    p.mostrar();
+                    break;
+
+                case 3: {
+
+                    int id;
+
+                    string proveedor;
+                    string nit;
+                    string direccion;
+                    string telefono;
+
+                    cout << "ID Proveedor: ";
+                    cin >> id;
+
+                    cin.ignore();
+
+                    cout << "Proveedor: ";
+                    getline(cin, proveedor);
+
+                    cout << "NIT: ";
+                    getline(cin, nit);
+
+                    cout << "Direccion: ";
+                    getline(cin, direccion);
+
+                    cout << "Telefono: ";
+                    getline(cin, telefono);
+
+                    p.setProveedor(proveedor);
+                    p.setNit(nit);
+                    p.setDireccion(direccion);
+                    p.setTelefono(telefono);
+
+                    p.modificar(id);
+
+                    break;
+                }
+
+                case 4: {
+
+                    int id;
+
+                    cout << "ID Proveedor: ";
+                    cin >> id;
+
+                    p.eliminar(id);
+
+                    break;
+                }
+
+                case 5: {
+
+                    int id;
+
+                    cout << "ID Proveedor: ";
+                    cin >> id;
+
+                    p.buscarProveedor(id);
+
+                    break;
+                }
+
+                }
+
                 system("pause");
 
             } while (op2 != 0);
 
             break;
         }
-
-              // ==========================================
-              // CLIENTES
-              // ==========================================
 
         case 4: {
 
@@ -364,6 +436,125 @@ int main() {
                 cout << "\nSeleccione: ";
                 cin >> op2;
 
+                cin.ignore();
+
+                switch (op2) {
+
+                case 1: {
+
+                    string nombres;
+                    string apellidos;
+                    string nit;
+                    string genero;
+                    string telefono;
+                    string correo;
+
+                    cout << "Nombres: ";
+                    getline(cin, nombres);
+
+                    cout << "Apellidos: ";
+                    getline(cin, apellidos);
+
+                    cout << "NIT: ";
+                    getline(cin, nit);
+
+                    cout << "Genero (1=M,0=F): ";
+                    getline(cin, genero);
+
+                    cout << "Telefono: ";
+                    getline(cin, telefono);
+
+                    cout << "Correo: ";
+                    getline(cin, correo);
+
+                    c.setNombres(nombres);
+                    c.setApellidos(apellidos);
+                    c.setNit(nit);
+                    c.setGenero(genero);
+                    c.setTelefono(telefono);
+                    c.setCorreo(correo);
+
+                    c.insertar();
+
+                    break;
+                }
+
+                case 2:
+                    c.mostrar();
+                    break;
+
+                case 3: {
+
+                    int id;
+
+                    string nombres;
+                    string apellidos;
+                    string nit;
+                    string genero;
+                    string telefono;
+                    string correo;
+
+                    cout << "ID Cliente: ";
+                    cin >> id;
+
+                    cin.ignore();
+
+                    cout << "Nombres: ";
+                    getline(cin, nombres);
+
+                    cout << "Apellidos: ";
+                    getline(cin, apellidos);
+
+                    cout << "NIT: ";
+                    getline(cin, nit);
+
+                    cout << "Genero (1=M,0=F): ";
+                    getline(cin, genero);
+
+                    cout << "Telefono: ";
+                    getline(cin, telefono);
+
+                    cout << "Correo: ";
+                    getline(cin, correo);
+
+                    c.setNombres(nombres);
+                    c.setApellidos(apellidos);
+                    c.setNit(nit);
+                    c.setGenero(genero);
+                    c.setTelefono(telefono);
+                    c.setCorreo(correo);
+
+                    c.modificar(id);
+
+                    break;
+                }
+
+                case 4: {
+
+                    int id;
+
+                    cout << "ID Cliente: ";
+                    cin >> id;
+
+                    c.eliminar(id);
+
+                    break;
+                }
+
+                case 5: {
+
+                    int id;
+
+                    cout << "ID Cliente: ";
+                    cin >> id;
+
+                    c.buscarCliente(id);
+
+                    break;
+                }
+
+                }
+
                 system("pause");
 
             } while (op2 != 0);
@@ -371,13 +562,9 @@ int main() {
             break;
         }
 
-              // ==========================================
-              // PUESTOS
-              // ==========================================
-
         case 5: {
 
-            Puesto pu;
+            Puesto p;
 
             int op2;
 
@@ -396,16 +583,80 @@ int main() {
                 cout << "\nSeleccione: ";
                 cin >> op2;
 
+                cin.ignore();
+
+                switch (op2) {
+
+                case 1: {
+
+                    string puesto;
+
+                    cout << "Puesto: ";
+                    getline(cin, puesto);
+
+                    p.setPuesto(puesto);
+
+                    p.insertar();
+
+                    break;
+                }
+
+                case 2:
+                    p.mostrar();
+                    break;
+
+                case 3: {
+
+                    int id;
+                    string puesto;
+
+                    cout << "ID Puesto: ";
+                    cin >> id;
+
+                    cin.ignore();
+
+                    cout << "Nuevo Puesto: ";
+                    getline(cin, puesto);
+
+                    p.setPuesto(puesto);
+
+                    p.modificar(id);
+
+                    break;
+                }
+
+                case 4: {
+
+                    int id;
+
+                    cout << "ID Puesto: ";
+                    cin >> id;
+
+                    p.eliminar(id);
+
+                    break;
+                }
+
+                case 5: {
+
+                    int id;
+
+                    cout << "ID Puesto: ";
+                    cin >> id;
+
+                    p.buscarPuesto(id);
+
+                    break;
+                }
+
+                }
+
                 system("pause");
 
             } while (op2 != 0);
 
             break;
         }
-
-              // ==========================================
-              // EMPLEADOS
-              // ==========================================
 
         case 6: {
 
@@ -428,6 +679,177 @@ int main() {
                 cout << "\nSeleccione: ";
                 cin >> op2;
 
+                cin.ignore();
+
+                switch (op2) {
+
+                case 1: {
+
+                    string nombres;
+                    string apellidos;
+                    string direccion;
+                    string telefono;
+                    string cui;
+                    string genero;
+                    string fechaNacimiento;
+                    string fechaInicio;
+
+                    int idPuesto;
+
+                    cout << "Nombres: ";
+                    getline(cin, nombres);
+
+                    cout << "Apellidos: ";
+                    getline(cin, apellidos);
+
+                    cout << "Direccion: ";
+                    getline(cin, direccion);
+
+                    cout << "Telefono: ";
+                    getline(cin, telefono);
+
+                    cout << "CUI: ";
+                    getline(cin, cui);
+
+                    cout << "Genero (1=M,0=F): ";
+                    getline(cin, genero);
+
+                    cout << "Fecha Nacimiento (YYYY-MM-DD): ";
+                    getline(cin, fechaNacimiento);
+
+                    cout << "ID Puesto: ";
+                    cin >> idPuesto;
+
+                    cin.ignore();
+
+                    cout << "Fecha Inicio Laborales (YYYY-MM-DD): ";
+                    getline(cin, fechaInicio);
+
+                    e.setNombres(nombres);
+                    e.setApellidos(apellidos);
+                    e.setDireccion(direccion);
+                    e.setTelefono(telefono);
+                    e.setCUI(cui);
+                    e.setGenero(genero);
+                    e.setFechaNacimiento(fechaNacimiento);
+                    e.setIdPuesto(idPuesto);
+                    e.setFechaInicioLaborales(fechaInicio);
+
+                    if (
+                        e.validarNombres() &&
+                        e.validarApellidos() &&
+                        e.validarDireccion() &&
+                        e.validarTelefonoEmpleado() &&
+                        e.validarCUIEmpleado() &&
+                        e.validarGeneroEmpleado() &&
+                        e.validarFechaNacimiento() &&
+                        e.validarFechaInicioLaborales()
+                        )
+                    {
+                        e.insertar();
+                    }
+                    else
+                    {
+                        cout << "\nDatos invalidos...\n";
+                    }
+
+                    break;
+                }
+
+                case 2:
+                    e.mostrar();
+                    break;
+
+                case 3: {
+
+                    int id;
+
+                    string nombres;
+                    string apellidos;
+                    string direccion;
+                    string telefono;
+                    string cui;
+                    string genero;
+                    string fechaNacimiento;
+                    string fechaInicio;
+
+                    int idPuesto;
+
+                    cout << "ID Empleado: ";
+                    cin >> id;
+
+                    cin.ignore();
+
+                    cout << "Nombres: ";
+                    getline(cin, nombres);
+
+                    cout << "Apellidos: ";
+                    getline(cin, apellidos);
+
+                    cout << "Direccion: ";
+                    getline(cin, direccion);
+
+                    cout << "Telefono: ";
+                    getline(cin, telefono);
+
+                    cout << "CUI: ";
+                    getline(cin, cui);
+
+                    cout << "Genero (1=M,0=F): ";
+                    getline(cin, genero);
+
+                    cout << "Fecha Nacimiento (YYYY-MM-DD): ";
+                    getline(cin, fechaNacimiento);
+
+                    cout << "ID Puesto: ";
+                    cin >> idPuesto;
+
+                    cin.ignore();
+
+                    cout << "Fecha Inicio Laborales (YYYY-MM-DD): ";
+                    getline(cin, fechaInicio);
+
+                    e.setNombres(nombres);
+                    e.setApellidos(apellidos);
+                    e.setDireccion(direccion);
+                    e.setTelefono(telefono);
+                    e.setCUI(cui);
+                    e.setGenero(genero);
+                    e.setFechaNacimiento(fechaNacimiento);
+                    e.setIdPuesto(idPuesto);
+                    e.setFechaInicioLaborales(fechaInicio);
+
+                    e.modificar(id);
+
+                    break;
+                }
+
+                case 4: {
+
+                    int id;
+
+                    cout << "ID Empleado: ";
+                    cin >> id;
+
+                    e.eliminar(id);
+
+                    break;
+                }
+
+                case 5: {
+
+                    int id;
+
+                    cout << "ID Empleado: ";
+                    cin >> id;
+
+                    e.buscarEmpleado(id);
+
+                    break;
+                }
+
+                }
+
                 system("pause");
 
             } while (op2 != 0);
@@ -435,25 +857,18 @@ int main() {
             break;
         }
 
-              // ==========================================
-              // VENTAS
-              // ==========================================
-
         case 7: {
 
             Venta v;
 
-            int idc;
-            int ide;
+            int idEmpleado;
 
-            cout << "ID Cliente: ";
-            cin >> idc;
+            cout << "ID Empleado que realiza la venta: ";
+            cin >> idEmpleado;
 
-            cout << "ID Empleado: ";
-            cin >> ide;
+            cin.ignore();
 
-            v.setIdCliente(idc);
-            v.setIdEmpleado(ide);
+            v.setIdEmpleado(idEmpleado);
 
             v.realizarVenta();
 
@@ -462,25 +877,16 @@ int main() {
             break;
         }
 
-              // ==========================================
-              // COMPRAS
-              // ==========================================
-
         case 8: {
 
             Compra c;
 
             int idp;
-            int ide;
 
             cout << "ID Proveedor: ";
             cin >> idp;
 
-            cout << "ID Empleado: ";
-            cin >> ide;
-
             c.setIdProveedor(idp);
-            c.setIdEmpleado(ide);
 
             c.realizarCompra();
 
@@ -488,6 +894,7 @@ int main() {
 
             break;
         }
+
         }
 
     } while (op != 0);

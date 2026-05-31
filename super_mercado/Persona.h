@@ -95,7 +95,7 @@ public:
     bool validarNIT(string nit) {
 
         regex formato(
-            "^[0-9CFcf-]+$"
+            "^(C/F|c/f|CF|cf|[0-9-]+)$"
         );
 
         return regex_match(

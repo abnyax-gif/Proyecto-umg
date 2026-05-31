@@ -1,13 +1,9 @@
-// ==========================================
-// Compra.h
-// ==========================================
-
 #pragma once
 
 #include <iostream>
 #include <mysql.h>
 #include <vector>
-#include <string>   
+#include <string>
 
 #include "ConexionSPBD.h"
 
@@ -18,9 +14,6 @@ class Compra {
 private:
 
     int id_proveedor = 0;
-    int id_empleado = 0;
-
-    int no_orden_compra = 1;
 
 public:
 
@@ -28,128 +21,284 @@ public:
         id_proveedor = idp;
     }
 
-    void setIdEmpleado(int ide) {
-        id_empleado = ide;
-    }
-
     void realizarCompra() {
 
         ConexionSPBD cn;
+
         cn.abrir_conexion();
 
-        if (cn.getConector() != NULL) {
+        if (cn.getConector() == NULL) {
+
+            cout << "Error en conexion..." << endl;
+            return;
+        }
+
+        mysql_query(
+            cn.getConector(),
+            "START TRANSACTION"
+        );
+
+        int no_orden_compra = 1;
+
+        string consultaOrden =
+            "SELECT IFNULL(MAX(no_orden_compra),0)+1 FROM compras";
+
+        mysql_query(
+            cn.getConector(),
+            consultaOrden.c_str()
+        );
+
+        MYSQL_RES* resOrden =
+            mysql_store_result(
+                cn.getConector()
+            );
+
+        MYSQL_ROW filaOrden =
+            mysql_fetch_row(
+                resOrden
+            );
+
+        if (filaOrden != NULL) {
+
+            no_orden_compra =
+                stoi(
+                    string(filaOrden[0])
+                );
+        }
+
+        mysql_free_result(
+            resOrden
+        );
+
+        vector<int> productos;
+        vector<int> cantidades;
+        vector<float> precios;
+        vector<string> nombres;
+
+        char continuar = 's';
+
+        while (
+            continuar == 's' ||
+            continuar == 'S'
+            ) {
 
             int id_producto;
             int cantidad;
 
-            float precio_costo = 0;
-            float subtotal = 0;
-            float total = 0;
+            cout << "\n==========================" << endl;
+            cout << "       NUEVA COMPRA" << endl;
+            cout << "==========================" << endl;
 
-            char continuar = 's';
+            cout << "ID Producto: ";
+            cin >> id_producto;
 
-            vector<int> productos;
-            vector<int> cantidades;
-            vector<float> precios;
-            vector<float> subtotales;
+            cout << "Cantidad: ";
+            cin >> cantidad;
 
-            while (continuar == 's' || continuar == 'S') {
+            string consultaProducto =
+                "SELECT producto,precio_costo "
+                "FROM productos WHERE id_producto=" +
+                to_string(id_producto);
 
-                cout << "\n==========================\n";
-                cout << "      NUEVA COMPRA        \n";
-                cout << "==========================\n";
+            int q_estado =
+                mysql_query(
+                    cn.getConector(),
+                    consultaProducto.c_str()
+                );
 
-                cout << "ID Producto: ";
-                cin >> id_producto;
+            if (!q_estado) {
 
-                cout << "Cantidad: ";
-                cin >> cantidad;
+                MYSQL_RES* resultado =
+                    mysql_store_result(
+                        cn.getConector()
+                    );
 
-                string consulta =
-                    "SELECT precio_costo FROM productos WHERE id_producto=" +
-                    to_string(id_producto);
-
-                mysql_query(cn.getConector(), consulta.c_str());
-
-                MYSQL_RES* resultado = mysql_store_result(cn.getConector());
-                MYSQL_ROW fila = mysql_fetch_row(resultado);
+                MYSQL_ROW fila =
+                    mysql_fetch_row(
+                        resultado
+                    );
 
                 if (fila != NULL) {
 
-                    precio_costo = stof(string(fila[0])); 
+                    string nombre =
+                        fila[0];
 
-                    subtotal = precio_costo * cantidad;
-                    total += subtotal;
+                    float precio =
+                        stof(
+                            string(fila[1])
+                        );
 
-                    productos.push_back(id_producto);
-                    cantidades.push_back(cantidad);
-                    precios.push_back(precio_costo);
-                    subtotales.push_back(subtotal);
+                    productos.push_back(
+                        id_producto
+                    );
 
-                    string actualizar =
-                        "UPDATE productos SET existencia = existencia + " +
+                    cantidades.push_back(
+                        cantidad
+                    );
+
+                    precios.push_back(
+                        precio
+                    );
+
+                    nombres.push_back(
+                        nombre
+                    );
+
+                    string actualizarStock =
+                        "UPDATE productos "
+                        "SET existencia = existencia + " +
                         to_string(cantidad) +
                         " WHERE id_producto=" +
                         to_string(id_producto);
 
-                    mysql_query(cn.getConector(), actualizar.c_str());
+                    mysql_query(
+                        cn.getConector(),
+                        actualizarStock.c_str()
+                    );
 
-                    cout << "Producto agregado...\n";
+                    cout << "Producto agregado..." << endl;
                 }
                 else {
-                    cout << "Producto no encontrado...\n";
+
+                    cout << "Producto no encontrado..." << endl;
                 }
 
-                cout << "\nDesea agregar otro producto? (s/n): ";
-                cin >> continuar;
+                mysql_free_result(
+                    resultado
+                );
+            }
+            else {
+
+                cout << "Error SQL..." << endl;
+
+                cout << mysql_error(
+                    cn.getConector()
+                ) << endl;
             }
 
-            string compra =
-                "INSERT INTO compras(no_orden_compra,fecha,id_proveedor,id_empleado,total) VALUES(" +
-                to_string(no_orden_compra) +
-                ",NOW()," +
-                to_string(id_proveedor) +
-                "," +
-                to_string(id_empleado) +
-                "," +
-                to_string(total) +
-                ")";
+            cout << "\nAgregar otro producto? (s/n): ";
+            cin >> continuar;
+        }
+        if (productos.empty()) {
 
-            mysql_query(cn.getConector(), compra.c_str());
+            cout << "\nNo se agregaron productos a la compra.\n";
 
-            long long id_compra = mysql_insert_id(cn.getConector());
+            mysql_query(
+                cn.getConector(),
+                "ROLLBACK"
+            );
 
-            for (int i = 0; i < productos.size(); i++) {
+            cn.cerrar_conexion();
+
+            return;
+        }
+
+        string insertarCompra =
+            "INSERT INTO compras("
+            "no_orden_compra,"
+            "id_proveedor,"
+            "fecha_orden,"
+            "fecha_ingreso"
+            ") VALUES(" +
+            to_string(no_orden_compra) +
+            "," +
+            to_string(id_proveedor) +
+            ",CURDATE(),NOW())";
+
+        int q_compra =
+            mysql_query(
+                cn.getConector(),
+                insertarCompra.c_str()
+            );
+
+        if (!q_compra) {
+
+            long long id_compra =
+                mysql_insert_id(
+                    cn.getConector()
+                );
+
+            for (
+                int i = 0;
+                i < productos.size();
+                i++
+                ) {
 
                 string detalle =
-                    "INSERT INTO compras_detalle(id_compra,id_producto,cantidad,costo,subtotal) VALUES(" +
-                    to_string(id_compra) + "," +
-                    to_string(productos[i]) + "," +
-                    to_string(cantidades[i]) + "," +
-                    to_string(precios[i]) + "," +
-                    to_string(subtotales[i]) +
+                    "INSERT INTO compras_detalle("
+                    "id_compra,"
+                    "id_producto,"
+                    "cantidad,"
+                    "precio_costo_unitario"
+                    ") VALUES(" +
+                    to_string(id_compra) +
+                    "," +
+                    to_string(productos[i]) +
+                    "," +
+                    to_string(cantidades[i]) +
+                    "," +
+                    to_string(precios[i]) +
                     ")";
 
-                mysql_query(cn.getConector(), detalle.c_str());
+                mysql_query(
+                    cn.getConector(),
+                    detalle.c_str()
+                );
             }
 
-            cout << "\n======================================\n";
-            cout << "          COMPRA REALIZADA           \n";
-            cout << "======================================\n";
-            cout << "Orden Compra: " << no_orden_compra << endl;
+            mysql_query(
+                cn.getConector(),
+                "COMMIT"
+            );
 
-            for (int i = 0; i < productos.size(); i++) {
-                cout << "Producto ID: " << productos[i]
-                    << " Cantidad: " << cantidades[i]
-                    << " Subtotal: Q" << subtotales[i] << endl;
+            cout << "\n==================================" << endl;
+            cout << "       COMPRA REGISTRADA" << endl;
+            cout << "==================================" << endl;
+
+            cout << "No. Orden: "
+                << no_orden_compra
+                << endl;
+
+            float total = 0;
+
+            for (
+                int i = 0;
+                i < productos.size();
+                i++
+                ) {
+
+                float subtotal =
+                    cantidades[i] *
+                    precios[i];
+
+                total += subtotal;
+
+                cout
+                    << nombres[i]
+                    << " | Cantidad: "
+                    << cantidades[i]
+                    << " | Precio Costo: Q"
+                    << precios[i]
+                    << " | Subtotal: Q"
+                    << subtotal
+                    << endl;
             }
 
+            cout << "==================================" << endl;
             cout << "TOTAL: Q" << total << endl;
-
-            no_orden_compra++;
         }
         else {
-            cout << "Error en conexion...\n";
+
+            mysql_query(
+                cn.getConector(),
+                "ROLLBACK"
+            );
+
+            cout << "Error al registrar compra..." << endl;
+
+            cout << mysql_error(
+                cn.getConector()
+            ) << endl;
         }
 
         cn.cerrar_conexion();

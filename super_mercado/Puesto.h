@@ -1,7 +1,3 @@
-// ==========================================
-// Puesto.h
-// ==========================================
-
 #pragma once
 
 #include <iostream>
@@ -17,41 +13,21 @@ class Puesto {
 private:
 
     int id_puesto = 0;
-
-    string codigo;
     string puesto;
 
 public:
 
     // ==========================================
-    // SETTERS
+    // SETTER
     // ==========================================
 
-    void setCodigo(string c) {
-
-        codigo = c;
-    }
-
     void setPuesto(string p) {
-
         puesto = p;
     }
 
     // ==========================================
-    // VALIDACIONES
+    // VALIDACION
     // ==========================================
-
-    bool validarCodigo() {
-
-        regex formato(
-            "^PU[0-9]{3}$"
-        );
-
-        return regex_match(
-            codigo,
-            formato
-        );
-    }
 
     bool validarPuesto() {
 
@@ -78,31 +54,24 @@ public:
         if (cn.getConector() != NULL) {
 
             string consulta =
-                "INSERT INTO puestos(codigo,puesto) VALUES('" +
-                codigo + "','" +
+                "INSERT INTO puestos(puesto) VALUES('" +
                 puesto + "')";
-
-            const char* c =
-                consulta.c_str();
 
             int q_estado =
                 mysql_query(
                     cn.getConector(),
-                    c
+                    consulta.c_str()
                 );
 
             if (!q_estado) {
 
-                cout << "Puesto ingresado..." << endl;
+                cout << "Puesto ingresado correctamente..." << endl;
             }
             else {
 
                 cout << "Error al ingresar puesto..." << endl;
+                cout << mysql_error(cn.getConector()) << endl;
             }
-        }
-        else {
-
-            cout << "Error en conexion..." << endl;
         }
 
         cn.cerrar_conexion();
@@ -126,13 +95,10 @@ public:
             string consulta =
                 "SELECT * FROM puestos";
 
-            const char* c =
-                consulta.c_str();
-
             int q_estado =
                 mysql_query(
                     cn.getConector(),
-                    c
+                    consulta.c_str()
                 );
 
             if (!q_estado) {
@@ -143,9 +109,9 @@ public:
                     );
 
                 cout << endl;
-                cout << "===================================" << endl;
-                cout << "ID | CODIGO | PUESTO" << endl;
-                cout << "===================================" << endl;
+                cout << "==========================" << endl;
+                cout << "ID | PUESTO" << endl;
+                cout << "==========================" << endl;
 
                 while (
                     (fila = mysql_fetch_row(resultado))
@@ -155,14 +121,15 @@ public:
                         << fila[0]
                         << " | "
                         << fila[1]
-                        << " | "
-                        << fila[2]
                         << endl;
                 }
+
+                mysql_free_result(resultado);
             }
             else {
 
                 cout << "Error en consulta..." << endl;
+                cout << mysql_error(cn.getConector()) << endl;
             }
         }
 
@@ -183,27 +150,24 @@ public:
 
             string consulta =
                 "UPDATE puestos SET "
-                "codigo='" + codigo +
-                "',puesto='" + puesto +
+                "puesto='" + puesto +
                 "' WHERE id_puesto=" +
                 to_string(id);
-
-            const char* c =
-                consulta.c_str();
 
             int q_estado =
                 mysql_query(
                     cn.getConector(),
-                    c
+                    consulta.c_str()
                 );
 
             if (!q_estado) {
 
-                cout << "Puesto modificado..." << endl;
+                cout << "Puesto modificado correctamente..." << endl;
             }
             else {
 
-                cout << "Error al modificar..." << endl;
+                cout << "Error al modificar puesto..." << endl;
+                cout << mysql_error(cn.getConector()) << endl;
             }
         }
 
@@ -226,22 +190,20 @@ public:
                 "DELETE FROM puestos WHERE id_puesto=" +
                 to_string(id);
 
-            const char* c =
-                consulta.c_str();
-
             int q_estado =
                 mysql_query(
                     cn.getConector(),
-                    c
+                    consulta.c_str()
                 );
 
             if (!q_estado) {
 
-                cout << "Puesto eliminado..." << endl;
+                cout << "Puesto eliminado correctamente..." << endl;
             }
             else {
 
-                cout << "Error al eliminar..." << endl;
+                cout << "Error al eliminar puesto..." << endl;
+                cout << mysql_error(cn.getConector()) << endl;
             }
         }
 
@@ -249,7 +211,7 @@ public:
     }
 
     // ==========================================
-    // BUSCAR PUESTO
+    // BUSCAR
     // ==========================================
 
     void buscarPuesto(int id) {
@@ -284,17 +246,23 @@ public:
 
             cout << endl;
             cout << "==========================" << endl;
-            cout << "Puesto Encontrado" << endl;
+            cout << "PUESTO ENCONTRADO" << endl;
             cout << "==========================" << endl;
 
-            cout << "ID: " << fila[0] << endl;
-            cout << "Codigo: " << fila[1] << endl;
-            cout << "Puesto: " << fila[2] << endl;
+            cout << "ID: "
+                << fila[0]
+                << endl;
+
+            cout << "Puesto: "
+                << fila[1]
+                << endl;
         }
         else {
 
             cout << "Puesto no encontrado..." << endl;
         }
+
+        mysql_free_result(resultado);
 
         cn.cerrar_conexion();
     }

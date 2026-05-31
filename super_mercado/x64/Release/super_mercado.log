@@ -1,9 +1,18 @@
-﻿  compra.cpp
+﻿  Cliente.cpp
+  Empleado.cpp
+  Persona.cpp
+  compra.cpp
   main.cpp
+C:\Users\82XV0088GJ\Desktop\progra1proyecto\vista_super_mercado\super_mercado\Venta.h(135,32): warning C4244: '=': conversión de 'uint64_t' a 'int'; posible pérdida de datos
+  (compilando archivo de origen "main.cpp")
+  
   venta.cpp
+C:\Users\82XV0088GJ\Desktop\progra1proyecto\vista_super_mercado\super_mercado\venta.h(135,32): warning C4244: '=': conversión de 'uint64_t' a 'int'; posible pérdida de datos
+  (compilando archivo de origen "venta.cpp")
+  
   Generando código
-  1065 of 1067 functions (99.8%) were compiled, the rest were copied from previous compilation.
-    1056 functions were new in current compilation
-    1 functions had inline decision re-evaluated but remain unchanged
+  496 of 1161 functions (42.7%) were compiled, the rest were copied from previous compilation.
+    64 functions were new in current compilation
+    111 functions had inline decision re-evaluated but remain unchanged
   Generación de código finalizada
   super_mercado.vcxproj -> C:\Users\82XV0088GJ\Desktop\progra1proyecto\vista_super_mercado\x64\Release\super_mercado.exe

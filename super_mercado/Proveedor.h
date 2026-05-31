@@ -1,7 +1,3 @@
-// ==========================================
-// Proveedor.h
-// ==========================================
-
 #pragma once
 
 #include <iostream>
@@ -18,7 +14,6 @@ private:
 
     int id_proveedor = 0;
 
-    string codigo;
     string proveedor;
     string nit;
     string direccion;
@@ -30,46 +25,25 @@ public:
     // SETTERS
     // ==========================================
 
-    void setCodigo(string c) {
-
-        codigo = c;
-    }
-
     void setProveedor(string p) {
-
         proveedor = p;
     }
 
     void setNit(string n) {
-
         nit = n;
     }
 
     void setDireccion(string d) {
-
         direccion = d;
     }
 
     void setTelefono(string t) {
-
         telefono = t;
     }
 
     // ==========================================
     // VALIDACIONES
     // ==========================================
-
-    bool validarCodigo() {
-
-        regex formato(
-            "^PR[0-9]{3}$"
-        );
-
-        return regex_match(
-            codigo,
-            formato
-        );
-    }
 
     bool validarProveedor() {
 
@@ -79,6 +53,18 @@ public:
 
         return regex_match(
             proveedor,
+            formato
+        );
+    }
+
+    bool validarNIT() {
+
+        regex formato(
+            "^(C/F|c/f|CF|cf|[0-9-]+)$"
+        );
+
+        return regex_match(
+            nit,
             formato
         );
     }
@@ -95,21 +81,9 @@ public:
         );
     }
 
-    bool validarNIT() {
-
-        regex formato(
-            "^[0-9CFcf-]+$"
-        );
-
-        return regex_match(
-            nit,
-            formato
-        );
-    }
-
     bool validarDireccion() {
 
-        return direccion != "";
+        return !direccion.empty();
     }
 
     // ==========================================
@@ -125,34 +99,27 @@ public:
         if (cn.getConector() != NULL) {
 
             string consulta =
-                "INSERT INTO proveedores(codigo,proveedor,nit,direccion,telefono) VALUES('" +
-                codigo + "','" +
+                "INSERT INTO proveedores(proveedor,nit,direccion,telefono) VALUES('" +
                 proveedor + "','" +
                 nit + "','" +
                 direccion + "','" +
                 telefono + "')";
 
-            const char* c =
-                consulta.c_str();
-
             int q_estado =
                 mysql_query(
                     cn.getConector(),
-                    c
+                    consulta.c_str()
                 );
 
             if (!q_estado) {
 
-                cout << "Proveedor ingresado..." << endl;
+                cout << "Proveedor ingresado correctamente..." << endl;
             }
             else {
 
                 cout << "Error al ingresar proveedor..." << endl;
+                cout << mysql_error(cn.getConector()) << endl;
             }
-        }
-        else {
-
-            cout << "Error en conexion..." << endl;
         }
 
         cn.cerrar_conexion();
@@ -176,13 +143,10 @@ public:
             string consulta =
                 "SELECT * FROM proveedores";
 
-            const char* c =
-                consulta.c_str();
-
             int q_estado =
                 mysql_query(
                     cn.getConector(),
-                    c
+                    consulta.c_str()
                 );
 
             if (!q_estado) {
@@ -193,9 +157,9 @@ public:
                     );
 
                 cout << endl;
-                cout << "======================================================" << endl;
-                cout << "ID | CODIGO | PROVEEDOR | NIT | TELEFONO" << endl;
-                cout << "======================================================" << endl;
+                cout << "============================================================" << endl;
+                cout << "ID | PROVEEDOR | NIT | TELEFONO" << endl;
+                cout << "============================================================" << endl;
 
                 while (
                     (fila = mysql_fetch_row(resultado))
@@ -208,15 +172,16 @@ public:
                         << " | "
                         << fila[2]
                         << " | "
-                        << fila[3]
-                        << " | "
-                        << fila[5]
+                        << fila[4]
                         << endl;
                 }
+
+                mysql_free_result(resultado);
             }
             else {
 
                 cout << "Error en consulta..." << endl;
+                cout << mysql_error(cn.getConector()) << endl;
             }
         }
 
@@ -237,30 +202,27 @@ public:
 
             string consulta =
                 "UPDATE proveedores SET "
-                "codigo='" + codigo +
-                "',proveedor='" + proveedor +
+                "proveedor='" + proveedor +
                 "',nit='" + nit +
                 "',direccion='" + direccion +
                 "',telefono='" + telefono +
                 "' WHERE id_proveedor=" +
                 to_string(id);
 
-            const char* c =
-                consulta.c_str();
-
             int q_estado =
                 mysql_query(
                     cn.getConector(),
-                    c
+                    consulta.c_str()
                 );
 
             if (!q_estado) {
 
-                cout << "Proveedor modificado..." << endl;
+                cout << "Proveedor modificado correctamente..." << endl;
             }
             else {
 
-                cout << "Error al modificar..." << endl;
+                cout << "Error al modificar proveedor..." << endl;
+                cout << mysql_error(cn.getConector()) << endl;
             }
         }
 
@@ -283,22 +245,20 @@ public:
                 "DELETE FROM proveedores WHERE id_proveedor=" +
                 to_string(id);
 
-            const char* c =
-                consulta.c_str();
-
             int q_estado =
                 mysql_query(
                     cn.getConector(),
-                    c
+                    consulta.c_str()
                 );
 
             if (!q_estado) {
 
-                cout << "Proveedor eliminado..." << endl;
+                cout << "Proveedor eliminado correctamente..." << endl;
             }
             else {
 
-                cout << "Error al eliminar..." << endl;
+                cout << "Error al eliminar proveedor..." << endl;
+                cout << mysql_error(cn.getConector()) << endl;
             }
         }
 
@@ -306,7 +266,7 @@ public:
     }
 
     // ==========================================
-    // BUSCAR PROVEEDOR
+    // BUSCAR
     // ==========================================
 
     void buscarProveedor(int id) {
@@ -340,21 +300,22 @@ public:
         if (fila != NULL) {
 
             cout << endl;
-            cout << "===============================" << endl;
-            cout << "Proveedor Encontrado" << endl;
-            cout << "===============================" << endl;
+            cout << "==============================" << endl;
+            cout << "PROVEEDOR ENCONTRADO" << endl;
+            cout << "==============================" << endl;
 
             cout << "ID: " << fila[0] << endl;
-            cout << "Codigo: " << fila[1] << endl;
-            cout << "Proveedor: " << fila[2] << endl;
-            cout << "NIT: " << fila[3] << endl;
-            cout << "Direccion: " << fila[4] << endl;
-            cout << "Telefono: " << fila[5] << endl;
+            cout << "Proveedor: " << fila[1] << endl;
+            cout << "NIT: " << fila[2] << endl;
+            cout << "Direccion: " << fila[3] << endl;
+            cout << "Telefono: " << fila[4] << endl;
         }
         else {
 
             cout << "Proveedor no encontrado..." << endl;
         }
+
+        mysql_free_result(resultado);
 
         cn.cerrar_conexion();
     }
